@@ -22,6 +22,12 @@
         button:hover {
             background-color: #0056b3;
         }
+        video, canvas {
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body>
@@ -31,22 +37,63 @@
 
     <p id="output"></p>
 
-    <script>
-        document.getElementById('selfieButton').addEventListener('click', function() {
-            let selfieCount = prompt("How many selfies would you like to take?");
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
 
-            if (selfieCount !== null && selfieCount !== "") {
-                selfieCount = parseInt(selfieCount, 10);
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let selfieCount = 0;
+
+        // Access the webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing webcam: ", err);
+                document.getElementById('output').textContent = "Unable to access the webcam.";
+            });
+
+        document.getElementById('selfieButton').addEventListener('click', async function() {
+            let input = prompt("How many selfies would you like to take?");
+
+            if (input !== null && input !== "") {
+                selfieCount = parseInt(input, 10);
 
                 if (isNaN(selfieCount) || selfieCount <= 0) {
                     document.getElementById('output').textContent = "Please enter a valid positive number.";
                 } else {
-                    document.getElementById('output').textContent = `You chose to take ${selfieCount} selfie(s)!`;
+                    document.getElementById('output').textContent = `Taking ${selfieCount} selfie(s)...`;
+                    for (let i = 0; i < selfieCount; i++) {
+                        await takeSelfie(i + 1);
+                    }
+                    document.getElementById('output').textContent = `Finished taking ${selfieCount} selfie(s)!`;
                 }
             } else {
                 document.getElementById('output').textContent = "You didn't enter a number.";
             }
         });
+
+        async function takeSelfie(index) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imgData = canvas.toDataURL('image/png');
+
+                    // Create a download link for the selfie
+                    const link = document.createElement('a');
+                    link.href = imgData;
+                    link.download = `selfie_${index}.png`;
+                    link.textContent = `Download Selfie ${index}`;
+                    link.style.display = 'block';
+                    document.body.appendChild(link);
+
+                    resolve();
+                }, 1000); // Wait 1 second between selfies
+            });
+        }
     </script>
 </body>
 </html>
