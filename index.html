@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selfie Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>How Many Selfies?</h1>
+    <p>Click the button below to enter how many selfies you'd like to take.</p>
+    <button id="selfieButton">Enter Number of Selfies</button>
+
+    <p id="output"></p>
+
+    <script>
+        document.getElementById('selfieButton').addEventListener('click', function() {
+            let selfieCount = prompt("How many selfies would you like to take?");
+
+            if (selfieCount !== null && selfieCount !== "") {
+                selfieCount = parseInt(selfieCount, 10);
+
+                if (isNaN(selfieCount) || selfieCount <= 0) {
+                    document.getElementById('output').textContent = "Please enter a valid positive number.";
+                } else {
+                    document.getElementById('output').textContent = `You chose to take ${selfieCount} selfie(s)!`;
+                }
+            } else {
+                document.getElementById('output').textContent = "You didn't enter a number.";
+            }
+        });
+    </script>
+</body>
+</html>
