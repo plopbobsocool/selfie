@@ -43,9 +43,11 @@
     </style>
 </head>
 <body>
-    <h1>How Many Selfies?</h1>
-    <p>Click the button below to enter how many selfies you'd like to take.</p>
-    <button id="selfieButton">Enter Number of Selfies</button>
+    <h1>Take Selfies</h1>
+    <p>Click the "Start Taking Selfies" button to capture your selfies one by one.</p>
+
+    <button id="startButton">Start Taking Selfies</button>
+    <button id="takeSelfieButton" style="display: none;">Take Selfie</button>
 
     <p id="output"></p>
 
@@ -59,7 +61,9 @@
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
         const selfieContainer = document.getElementById('selfieContainer');
-        let selfieCount = 0;
+        const startButton = document.getElementById('startButton');
+        const takeSelfieButton = document.getElementById('takeSelfieButton');
+        let selfiesRemaining = 0;
 
         // Access the webcam
         navigator.mediaDevices.getUserMedia({ video: true })
@@ -71,43 +75,48 @@
                 document.getElementById('output').textContent = "Unable to access the webcam.";
             });
 
-        document.getElementById('selfieButton').addEventListener('click', async function() {
-            let input = prompt("How many selfies would you like to take?");
+        startButton.addEventListener('click', function() {
+            const input = prompt("How many selfies would you like to take?");
 
             if (input !== null && input !== "") {
-                selfieCount = parseInt(input, 10);
+                const count = parseInt(input, 10);
 
-                if (isNaN(selfieCount) || selfieCount <= 0) {
+                if (isNaN(count) || count <= 0) {
                     document.getElementById('output').textContent = "Please enter a valid positive number.";
                 } else {
-                    document.getElementById('output').textContent = `Taking ${selfieCount} selfie(s)...`;
+                    selfiesRemaining = count;
+                    document.getElementById('output').textContent = `You can now take ${count} selfie(s). Click the "Take Selfie" button.`;
                     selfieContainer.innerHTML = ""; // Clear previous selfies
-                    for (let i = 0; i < selfieCount; i++) {
-                        await takeSelfie(i + 1);
-                    }
-                    document.getElementById('output').textContent = `Finished taking ${selfieCount} selfie(s)!`;
+                    startButton.style.display = 'none';
+                    takeSelfieButton.style.display = 'inline-block';
                 }
             } else {
                 document.getElementById('output').textContent = "You didn't enter a number.";
             }
         });
 
-        async function takeSelfie(index) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const imgData = canvas.toDataURL('image/png');
+        takeSelfieButton.addEventListener('click', function() {
+            if (selfiesRemaining > 0) {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imgData = canvas.toDataURL('image/png');
 
-                    // Create an image element to display the selfie
-                    const img = document.createElement('img');
-                    img.src = imgData;
-                    img.alt = `Selfie ${index}`;
-                    selfieContainer.appendChild(img);
+                // Create an image element to display the selfie
+                const img = document.createElement('img');
+                img.src = imgData;
+                img.alt = `Selfie ${selfieContainer.children.length + 1}`;
+                selfieContainer.appendChild(img);
 
-                    resolve();
-                }, 1000); // Wait 1 second between selfies
-            });
-        }
+                selfiesRemaining--;
+
+                if (selfiesRemaining === 0) {
+                    document.getElementById('output').textContent = "All selfies taken!";
+                    takeSelfieButton.style.display = 'none';
+                    startButton.style.display = 'inline-block';
+                } else {
+                    document.getElementById('output').textContent = `${selfiesRemaining} selfie(s) remaining. Click "Take Selfie" again.`;
+                }
+            }
+        });
     </script>
 </body>
 </html>
