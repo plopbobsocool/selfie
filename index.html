@@ -22,7 +22,36 @@
         button:hover {
             background-color: #0056b3;
         }
-        video, canvas, .selfie-container img {
+        #selfieModeButton {
+            position: relative;
+            background-color: #ffcc00;
+            font-weight: bold;
+            border: 2px solid #ff8800;
+        }
+        #selfieModeButton::before,
+        #selfieModeButton::after {
+            content: "🎉";
+            position: absolute;
+            font-size: 24px;
+        }
+        #selfieModeButton::before {
+            left: -30px;
+            top: 5px;
+        }
+        #selfieModeButton::after {
+            right: -30px;
+            top: 5px;
+        }
+        video {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            width: 640px;
+            height: 480px;
+            background-color: black;
+        }
+        canvas, .selfie-container img {
             margin-top: 20px;
             display: block;
             margin-left: auto;
@@ -44,14 +73,15 @@
 </head>
 <body>
     <h1>Take Selfies</h1>
-    <p>Click the "Start Taking Selfies" button to capture your selfies one by one.</p>
+    <p>Click "Enable Selfie Mode" to display your webcam feed and start taking selfies.</p>
 
-    <button id="startButton">Start Taking Selfies</button>
+    <button id="selfieModeButton">Enable Selfie Mode</button>
+    <button id="startButton" style="display: none;">Start Taking Selfies</button>
     <button id="takeSelfieButton" style="display: none;">Take Selfie</button>
 
     <p id="output"></p>
 
-    <video id="video" width="640" height="480" autoplay></video>
+    <video id="video" autoplay style="display: none;"></video>
     <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
 
     <div class="selfie-container" id="selfieContainer"></div>
@@ -61,19 +91,25 @@
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
         const selfieContainer = document.getElementById('selfieContainer');
+        const selfieModeButton = document.getElementById('selfieModeButton');
         const startButton = document.getElementById('startButton');
         const takeSelfieButton = document.getElementById('takeSelfieButton');
         let selfiesRemaining = 0;
 
-        // Access the webcam
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(err => {
-                console.error("Error accessing webcam: ", err);
-                document.getElementById('output').textContent = "Unable to access the webcam.";
-            });
+        // Enable selfie mode
+        selfieModeButton.addEventListener('click', function () {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    selfieModeButton.style.display = 'none';
+                    startButton.style.display = 'inline-block';
+                })
+                .catch(err => {
+                    console.error("Error accessing webcam: ", err);
+                    document.getElementById('output').textContent = "Unable to access the webcam.";
+                });
+        });
 
         startButton.addEventListener('click', function() {
             const input = prompt("How many selfies would you like to take?");
