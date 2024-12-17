@@ -76,8 +76,7 @@
     <p>Click "Enable Selfie Mode" to display your webcam feed and start taking selfies.</p>
 
     <button id="selfieModeButton">Enable Selfie Mode</button>
-    <button id="startButton" style="display: none;">Start Taking Selfies</button>
-    <button id="takeSelfieButton" style="display: none;">Take Selfie</button>
+    <button id="startButton" style="display: none;">Select Number of Selfies</button>
 
     <p id="output"></p>
 
@@ -93,7 +92,6 @@
         const selfieContainer = document.getElementById('selfieContainer');
         const selfieModeButton = document.getElementById('selfieModeButton');
         const startButton = document.getElementById('startButton');
-        const takeSelfieButton = document.getElementById('takeSelfieButton');
         let selfiesRemaining = 0;
 
         // Enable selfie mode
@@ -111,6 +109,7 @@
                 });
         });
 
+        // Start taking selfies
         startButton.addEventListener('click', function() {
             const input = prompt("How many selfies would you like to take?");
 
@@ -121,38 +120,37 @@
                     document.getElementById('output').textContent = "Please enter a valid positive number.";
                 } else {
                     selfiesRemaining = count;
-                    document.getElementById('output').textContent = `You can now take ${count} selfie(s). Click the "Take Selfie" button.`;
+                    document.getElementById('output').textContent = `Taking ${count} selfie(s)...`;
                     selfieContainer.innerHTML = ""; // Clear previous selfies
-                    startButton.style.display = 'none';
-                    takeSelfieButton.style.display = 'inline-block';
+                    takeSelfiesAutomatically(count);
                 }
             } else {
                 document.getElementById('output').textContent = "You didn't enter a number.";
             }
         });
 
-        takeSelfieButton.addEventListener('click', function() {
-            if (selfiesRemaining > 0) {
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imgData = canvas.toDataURL('image/png');
+        // Function to take selfies automatically at intervals
+        function takeSelfiesAutomatically(count) {
+            let taken = 0;
 
-                // Create an image element to display the selfie
-                const img = document.createElement('img');
-                img.src = imgData;
-                img.alt = `Selfie ${selfieContainer.children.length + 1}`;
-                selfieContainer.appendChild(img);
+            const interval = setInterval(() => {
+                if (taken < count) {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imgData = canvas.toDataURL('image/png');
 
-                selfiesRemaining--;
+                    // Create an image element to display the selfie
+                    const img = document.createElement('img');
+                    img.src = imgData;
+                    img.alt = `Selfie ${selfieContainer.children.length + 1}`;
+                    selfieContainer.appendChild(img);
 
-                if (selfiesRemaining === 0) {
-                    document.getElementById('output').textContent = "All selfies taken!";
-                    takeSelfieButton.style.display = 'none';
-                    startButton.style.display = 'inline-block';
+                    taken++;
                 } else {
-                    document.getElementById('output').textContent = `${selfiesRemaining} selfie(s) remaining. Click "Take Selfie" again.`;
+                    clearInterval(interval);
+                    document.getElementById('output').textContent = "All selfies taken!";
                 }
-            }
-        });
+            }, 10); // 0.01 seconds interval
+        }
     </script>
 </body>
 </html>
