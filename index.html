@@ -27,15 +27,12 @@
             background-color: #0056b3;
         }
         .text-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             font-size: 36px;
             font-weight: bold;
             color: white;
             opacity: 0;
             transition: opacity 1s ease-in-out;
+            margin: 10px;
         }
         .ben-text {
             position: fixed;
@@ -173,65 +170,64 @@
         }, 1000);
     }
 
-// Function for "Trap" Sequence
-function triggerTrapSequence() {
-    document.body.style.transition = "background-color 5s";
-    document.body.style.backgroundColor = "black";
-    document.body.innerHTML = ""; // Clear the screen
+    // Function for "Trap" Sequence
+    function triggerTrapSequence() {
+        document.body.style.transition = "background-color 5s";
+        document.body.style.backgroundColor = "black";
+        document.body.innerHTML = ""; // Clear the screen
 
-    const messages = [
-        "Your trap?",
-        "What trap?",
-        "You think you've deceived me?",
-        "I've deceived you!",
-        "You think you can play with the trapper?",
-        "Well you're wrong",
-        "You think I didn't know the link is broken?",
-        "You really think that little of me?",
-        "Appalling",
-        "HAHAHAHAHA MY TRAP",
-        "It looks like you fell for my trap"
-    ];
+        const messages = [
+            "Your trap?",
+            "What trap?",
+            "You think you've deceived me?",
+            "I've deceived you!",
+            "You think you can play with the trapper?",
+            "Well you're wrong",
+            "You think I didn't know the link is broken?",
+            "You really think that little of me?",
+            "Appalling",
+            "HAHAHAHAHA MY TRAP",
+            "It looks like you fell for my trap"
+        ];
 
-    let messageIndex = 0;
-    let messageYPosition = 20; // Starting position for the first message
+        let messageIndex = 0;
+        let messageYPosition = 20; // Starting position for the first message
 
-    function showNextMessage() {
-        if (messageIndex < messages.length) {
-            showTrapMessage(messages[messageIndex], messageYPosition);
-            messageYPosition += 60; // Increase the Y position for the next message
-            messageIndex++;
-            setTimeout(showNextMessage, 4000); // Adjust timing between messages
+        function showNextMessage() {
+            if (messageIndex < messages.length) {
+                showTrapMessage(messages[messageIndex], messageYPosition);
+                messageYPosition += 60; // Increase the Y position for the next message
+                messageIndex++;
+                setTimeout(showNextMessage, 4000); // Adjust timing between messages
+            }
         }
+
+        showNextMessage();
+        setTimeout(() => pulseImageIntoView(), 12000); // Show the image after messages
     }
 
-    showNextMessage();
-    setTimeout(() => pulseImageIntoView(), 12000); // Show the image after messages
-}
+    // Function to display messages like a conversation
+    function showTrapMessage(text, topPosition) {
+        const message = document.createElement('div');
+        message.style.position = "absolute";
+        message.style.left = "50%";
+        message.style.transform = "translateX(-50%)";
+        message.style.top = `${topPosition}px`; // Position messages with increasing Y-axis
+        message.style.color = "white";
+        message.style.fontSize = "36px";
+        message.style.fontWeight = "bold";
+        message.style.textAlign = "center";
+        message.style.opacity = 0;
+        message.style.transition = "opacity 2s";
+        message.style.whiteSpace = "pre-wrap"; // Allow text to wrap inside the div
+        message.textContent = text;
 
-// Function to display messages like a conversation
-function showTrapMessage(text, topPosition) {
-    const message = document.createElement('div');
-    message.style.position = "fixed";
-    message.style.left = "50%";
-    message.style.transform = "translateX(-50%)";
-    message.style.top = `${topPosition}px`; // Position messages with increasing Y-axis
-    message.style.color = "white";
-    message.style.fontSize = "36px";
-    message.style.fontWeight = "bold";
-    message.style.textAlign = "center";
-    message.style.opacity = 0;
-    message.style.transition = "opacity 2s";
-    message.style.whiteSpace = "pre-wrap"; // Allow text to wrap inside the div
-    message.textContent = text;
+        document.body.appendChild(message);
 
-    document.body.appendChild(message);
-
-    // Fade in and out with delays to make each message appear sequentially
-    setTimeout(() => message.style.opacity = 1, 100); // Fade in
-    setTimeout(() => message.style.opacity = 0, 2000); // Fade out after 2 seconds
-}
-
+        // Fade in and out with delays to make each message appear sequentially
+        setTimeout(() => message.style.opacity = 1, 100); // Fade in
+        setTimeout(() => message.style.opacity = 0, 2000); // Fade out after 2 seconds
+    }
 
     // Function to pulse the image into view
     function pulseImageIntoView() {
@@ -250,6 +246,6 @@ function showTrapMessage(text, topPosition) {
             img.style.opacity = 1;
         }, 500);
     }
-</script>
+    </script>
 </body>
 </html>
