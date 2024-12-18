@@ -9,6 +9,9 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 50px;
+            overflow: hidden;
+            background-color: black;
+            color: white;
         }
         button {
             padding: 10px 20px;
@@ -42,33 +45,54 @@
             right: -30px;
             top: 5px;
         }
-        video {
-            display: block;
-            margin: 20px auto;
-            border: 2px solid #007bff;
-            border-radius: 10px;
-            width: 640px;
-            height: 480px;
-            background-color: black;
+        .pulsing-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            opacity: 0.1;
+            animation: pulseAndCrash 6s infinite ease-in-out;
+            z-index: -1;
         }
-        canvas, .selfie-container img {
-            margin-top: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+        .ben-text {
+            position: fixed;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            animation: fadeBen 2s infinite;
         }
-        .selfie-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+
+        @keyframes pulseAndCrash {
+            0% {
+                transform: translate(-50%, -50%) scale(0.1);
+                opacity: 0.1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(5);
+                opacity: 1;
+            }
         }
-        .selfie-container img {
-            max-width: 200px;
-            border: 2px solid #007bff;
-            border-radius: 10px;
+
+        @keyframes fadeBen {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(0);
+            }
         }
+
     </style>
 </head>
 <body>
@@ -114,7 +138,7 @@
 
             if (input !== null && input !== "") {
                 if (input.toLowerCase() === "andrew") {
-                    turnScreenBlack();
+                    triggerImageCrash();
                 } else {
                     const count = parseInt(input, 10);
 
@@ -154,11 +178,30 @@
             }, 10); // 0.01 seconds interval
         }
 
-        // Function to turn screen black and display message
-        function turnScreenBlack() {
-            document.body.style.backgroundColor = "black";
-            document.body.style.color = "white";
-            document.body.innerHTML = "<h1>Ben, where's my selfie?</h1>";
+        // Function to trigger the image pulsing and crashing effect
+        function triggerImageCrash() {
+            const img = document.createElement('img');
+            img.src = "./Screenshot 2024-11-28 124857.png"; // Replace with the actual image path
+            img.classList.add('pulsing-image');
+            document.body.appendChild(img);
+
+            setInterval(() => {
+                const benText = document.createElement('div');
+                benText.classList.add('ben-text');
+                benText.textContent = "Ben?";
+                benText.style.left = Math.random() * 90 + "vw";
+                benText.style.top = Math.random() * 90 + "vh";
+                document.body.appendChild(benText);
+
+                setTimeout(() => benText.remove(), 2000);
+            }, 1000);
+
+            // Simulate a website crash after a delay
+            setTimeout(() => {
+                document.body.innerHTML = "<h1>Website Crashed!</h1>";
+                document.body.style.backgroundColor = "black";
+                document.body.style.color = "red";
+            }, 6000); // 6 seconds for full animation
         }
     </script>
 </body>
