@@ -179,7 +179,15 @@
         document.body.style.backgroundColor = "black";
         document.body.innerHTML = ""; // Clear the screen
 
-        setTimeout(() => showTrapMessage("My trap?"), 1000);
+        setTimeout(() => showTrapMessage("Your trap?"), 1000);
+        setTimeout(() => showTrapMessage("What trap?"), 1000);
+        setTimeout(() => showTrapMessage("You think you've decived me?"), 6000);
+        setTimeout(() => showTrapMessage("Ive decived you!"), 3000);
+        setTimeout(() => showTrapMessage("You think you can play with the trapper?"), 7000);
+        setTimeout(() => showTrapMessage("Well you're wrong"), 3000);
+        setTimeout(() => showTrapMessage("You think I didn't know the link is broken?"), 8000);
+        setTimeout(() => showTrapMessage("You really think that little of me?"), 7000);
+        setTimeout(() => showTrapMessage("Appalling"), 1000);
         setTimeout(() => showTrapMessage("HAHAHAHAHA MY TRAP"), 4000);
         setTimeout(() => showTrapMessage("It looks like you fell for my trap"), 7000);
 
@@ -202,7 +210,7 @@
 
         document.body.appendChild(message);
         setTimeout(() => message.style.opacity = 1, 100);
-        setTimeout(() => message.style.opacity = 0, 3000);
+        setTimeout(() => message.style.opacity = 0, 2000);
     }
 
     // Function to pulse the image into view
