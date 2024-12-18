@@ -80,115 +80,148 @@
     <div class="selfie-container" id="selfieContainer"></div>
 
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-        const selfieContainer = document.getElementById('selfieContainer');
-        const selfieModeButton = document.getElementById('selfieModeButton');
-        const startButton = document.getElementById('startButton');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const selfieContainer = document.getElementById('selfieContainer');
+    const selfieModeButton = document.getElementById('selfieModeButton');
+    const startButton = document.getElementById('startButton');
 
-        // Enable selfie mode
-        selfieModeButton.addEventListener('click', function () {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    video.srcObject = stream;
-                    video.style.display = 'block';
-                    selfieModeButton.style.display = 'none';
-                    startButton.style.display = 'inline-block';
-                })
-                .catch(err => {
-                    console.error("Error accessing webcam: ", err);
-                    document.getElementById('output').textContent = "Unable to access the webcam.";
-                });
-        });
+    // Enable selfie mode
+    selfieModeButton.addEventListener('click', function () {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.style.display = 'block';
+                selfieModeButton.style.display = 'none';
+                startButton.style.display = 'inline-block';
+            })
+            .catch(err => {
+                console.error("Error accessing webcam: ", err);
+                document.getElementById('output').textContent = "Unable to access the webcam.";
+            });
+    });
 
-        // Start taking selfies
-        startButton.addEventListener('click', function() {
-            const input = prompt("How many selfies would you like to take?");
-            
-            if (input !== null && input !== "") {
-                if (input.toLowerCase() === "andrew") {
-                    setTimeout(triggerAndrewEffect, 2000);
-                } else if (input.toLowerCase() === "trap") {
-                    triggerTrapSequence();
+    // Start taking selfies or trigger keyword effects
+    startButton.addEventListener('click', function () {
+        const input = prompt("How many selfies would you like to take?");
+        
+        if (input !== null && input !== "") {
+            const lowercaseInput = input.toLowerCase();
+
+            if (lowercaseInput === "andrew") {
+                triggerAndrewEffect();
+            } else if (lowercaseInput === "trap") {
+                triggerTrapSequence();
+            } else {
+                const count = parseInt(input, 10);
+                if (isNaN(count) || count <= 0) {
+                    document.getElementById('output').textContent = "Please enter a valid positive number.";
                 } else {
-                    const count = parseInt(input, 10);
-                    if (isNaN(count) || count <= 0) {
-                        document.getElementById('output').textContent = "Please enter a valid positive number.";
-                    } else {
-                        takeSelfiesAutomatically(count);
-                    }
+                    document.getElementById('output').textContent = `Taking ${count} selfie(s)...`;
+                    selfieContainer.innerHTML = ""; // Clear previous selfies
+                    takeSelfiesAutomatically(count);
                 }
             }
-        });
-
-        // Take selfies automatically
-        function takeSelfiesAutomatically(count) {
-            let taken = 0;
-            const interval = setInterval(() => {
-                if (taken < count) {
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const img = document.createElement('img');
-                    img.src = canvas.toDataURL('image/png');
-                    img.alt = `Selfie ${selfieContainer.children.length + 1}`;
-                    selfieContainer.appendChild(img);
-                    taken++;
-                } else {
-                    clearInterval(interval);
-                    document.getElementById('output').textContent = "All selfies taken!";
-                }
-            }, 10);
+        } else {
+            document.getElementById('output').textContent = "You didn't enter a number.";
         }
+    });
 
-        // "Trap" Sequence
-        function triggerTrapSequence() {
-            document.body.style.backgroundColor = "black";
-            document.body.style.color = "white";
+    // Function to take selfies automatically
+    function takeSelfiesAutomatically(count) {
+        let taken = 0;
+        const interval = setInterval(() => {
+            if (taken < count) {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL('image/png');
+                img.alt = `Selfie ${selfieContainer.children.length + 1}`;
+                selfieContainer.appendChild(img);
+                taken++;
+            } else {
+                clearInterval(interval);
+                document.getElementById('output').textContent = "All selfies taken!";
+            }
+        }, 10);
+    }
 
-            setTimeout(() => showTextMessage("My trap?"), 1000);
-            setTimeout(() => showTextMessage("HAHAHAHAHA MY TRAP"), 3000);
-            setTimeout(() => showTextMessage("It looks like you fell for my trap"), 6000);
+    // Function for "Andrew" Effect
+    function triggerAndrewEffect() {
+        document.body.style.transition = "background-color 2s";
+        document.body.style.backgroundColor = "black";
 
-            setTimeout(() => pulseImageIntoView(), 8000);
-        }
+        setTimeout(() => {
+            spawnBenText();
+            pulseImageIntoView();
+        }, 3000);
+    }
 
-        function showTextMessage(text) {
-            const message = document.createElement('div');
-            message.classList.add('text-message');
-            message.textContent = text;
-            document.body.appendChild(message);
-            setTimeout(() => message.style.opacity = 1, 100);
-            setTimeout(() => message.style.opacity = 0, 2500);
-        }
+    function spawnBenText() {
+        setInterval(() => {
+            const benText = document.createElement('div');
+            benText.style.position = "fixed";
+            benText.style.left = Math.random() * 90 + "vw";
+            benText.style.top = Math.random() * 90 + "vh";
+            benText.style.color = "white";
+            benText.style.fontSize = "36px";
+            benText.style.fontWeight = "bold";
+            benText.textContent = "Ben?";
+            document.body.appendChild(benText);
 
-        // "Andrew" Effect
-        function triggerAndrewEffect() {
-            setTimeout(() => {
-                document.body.style.backgroundColor = "black";
-                spawnBenText();
-                pulseImageIntoView();
-            }, 1000);
-        }
+            setTimeout(() => benText.remove(), 2000);
+        }, 1000);
+    }
 
-        function spawnBenText() {
-            setInterval(() => {
-                const benText = document.createElement('div');
-                benText.classList.add('ben-text');
-                benText.textContent = "Ben?";
-                benText.style.left = Math.random() * 90 + "vw";
-                benText.style.top = Math.random() * 90 + "vh";
-                document.body.appendChild(benText);
+    // Function for "Trap" Sequence
+    function triggerTrapSequence() {
+        document.body.style.transition = "background-color 5s";
+        document.body.style.backgroundColor = "black";
+        document.body.innerHTML = ""; // Clear the screen
 
-                setTimeout(() => benText.remove(), 2000);
-            }, 1000);
-        }
+        setTimeout(() => showTrapMessage("My trap?"), 1000);
+        setTimeout(() => showTrapMessage("HAHAHAHAHA MY TRAP"), 4000);
+        setTimeout(() => showTrapMessage("It looks like you fell for my trap"), 7000);
 
-        function pulseImageIntoView() {
-            const img = document.createElement('img');
-            img.src = "./Screenshot 2024-11-28 124857.png"; 
-            img.classList.add('pulsing-image');
-            document.body.appendChild(img);
-        }
-    </script>
+        setTimeout(() => pulseImageIntoView(), 10000);
+    }
+
+    function showTrapMessage(text) {
+        const message = document.createElement('div');
+        message.style.position = "fixed";
+        message.style.top = "50%";
+        message.style.left = "50%";
+        message.style.transform = "translate(-50%, -50%)";
+        message.style.color = "white";
+        message.style.fontSize = "36px";
+        message.style.fontWeight = "bold";
+        message.style.textAlign = "center";
+        message.style.opacity = 0;
+        message.style.transition = "opacity 2s";
+        message.textContent = text;
+
+        document.body.appendChild(message);
+        setTimeout(() => message.style.opacity = 1, 100);
+        setTimeout(() => message.style.opacity = 0, 3000);
+    }
+
+    // Function to pulse the image into view
+    function pulseImageIntoView() {
+        const img = document.createElement('img');
+        img.src = "./Screenshot 2024-11-28 124857.png"; // Use your image path here
+        img.style.position = "fixed";
+        img.style.top = "50%";
+        img.style.left = "50%";
+        img.style.transform = "translate(-50%, -50%) scale(0.1)";
+        img.style.opacity = 0.1;
+        img.style.transition = "transform 5s, opacity 5s";
+        document.body.appendChild(img);
+
+        setTimeout(() => {
+            img.style.transform = "translate(-50%, -50%) scale(5)";
+            img.style.opacity = 1;
+        }, 500);
+    }
+</script>
 </body>
 </html>
