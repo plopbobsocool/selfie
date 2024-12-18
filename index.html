@@ -173,45 +173,65 @@
         }, 1000);
     }
 
-    // Function for "Trap" Sequence
-    function triggerTrapSequence() {
-        document.body.style.transition = "background-color 5s";
-        document.body.style.backgroundColor = "black";
-        document.body.innerHTML = ""; // Clear the screen
+// Function for "Trap" Sequence
+function triggerTrapSequence() {
+    document.body.style.transition = "background-color 5s";
+    document.body.style.backgroundColor = "black";
+    document.body.innerHTML = ""; // Clear the screen
 
-        setTimeout(() => showTrapMessage("Your trap?"), 1000);
-        setTimeout(() => showTrapMessage("What trap?"), 1000);
-        setTimeout(() => showTrapMessage("You think you've decived me?"), 6000);
-        setTimeout(() => showTrapMessage("Ive decived you!"), 3000);
-        setTimeout(() => showTrapMessage("You think you can play with the trapper?"), 7000);
-        setTimeout(() => showTrapMessage("Well you're wrong"), 3000);
-        setTimeout(() => showTrapMessage("You think I didn't know the link is broken?"), 8000);
-        setTimeout(() => showTrapMessage("You really think that little of me?"), 7000);
-        setTimeout(() => showTrapMessage("Appalling"), 1000);
-        setTimeout(() => showTrapMessage("HAHAHAHAHA MY TRAP"), 4000);
-        setTimeout(() => showTrapMessage("It looks like you fell for my trap"), 7000);
+    const messages = [
+        "Your trap?",
+        "What trap?",
+        "You think you've deceived me?",
+        "I've deceived you!",
+        "You think you can play with the trapper?",
+        "Well you're wrong",
+        "You think I didn't know the link is broken?",
+        "You really think that little of me?",
+        "Appalling",
+        "HAHAHAHAHA MY TRAP",
+        "It looks like you fell for my trap"
+    ];
 
-        setTimeout(() => pulseImageIntoView(), 10000);
+    let messageIndex = 0;
+    let messageYPosition = 20; // Starting position for the first message
+
+    function showNextMessage() {
+        if (messageIndex < messages.length) {
+            showTrapMessage(messages[messageIndex], messageYPosition);
+            messageYPosition += 60; // Increase the Y position for the next message
+            messageIndex++;
+            setTimeout(showNextMessage, 4000); // Adjust timing between messages
+        }
     }
 
-    function showTrapMessage(text) {
-        const message = document.createElement('div');
-        message.style.position = "fixed";
-        message.style.top = "50%";
-        message.style.left = "50%";
-        message.style.transform = "translate(-50%, -50%)";
-        message.style.color = "white";
-        message.style.fontSize = "36px";
-        message.style.fontWeight = "bold";
-        message.style.textAlign = "center";
-        message.style.opacity = 0;
-        message.style.transition = "opacity 2s";
-        message.textContent = text;
+    showNextMessage();
+    setTimeout(() => pulseImageIntoView(), 12000); // Show the image after messages
+}
 
-        document.body.appendChild(message);
-        setTimeout(() => message.style.opacity = 1, 100);
-        setTimeout(() => message.style.opacity = 0, 5000);
-    }
+// Function to display messages like a conversation
+function showTrapMessage(text, topPosition) {
+    const message = document.createElement('div');
+    message.style.position = "fixed";
+    message.style.left = "50%";
+    message.style.transform = "translateX(-50%)";
+    message.style.top = `${topPosition}px`; // Position messages with increasing Y-axis
+    message.style.color = "white";
+    message.style.fontSize = "36px";
+    message.style.fontWeight = "bold";
+    message.style.textAlign = "center";
+    message.style.opacity = 0;
+    message.style.transition = "opacity 2s";
+    message.style.whiteSpace = "pre-wrap"; // Allow text to wrap inside the div
+    message.textContent = text;
+
+    document.body.appendChild(message);
+
+    // Fade in and out with delays to make each message appear sequentially
+    setTimeout(() => message.style.opacity = 1, 100); // Fade in
+    setTimeout(() => message.style.opacity = 0, 2000); // Fade out after 2 seconds
+}
+
 
     // Function to pulse the image into view
     function pulseImageIntoView() {
