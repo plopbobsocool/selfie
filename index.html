@@ -27,12 +27,15 @@
             background-color: #0056b3;
         }
         .text-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             font-size: 36px;
             font-weight: bold;
             color: white;
             opacity: 0;
             transition: opacity 1s ease-in-out;
-            margin: 10px;
         }
         .ben-text {
             position: fixed;
@@ -199,20 +202,21 @@
                 messageYPosition += 60; // Increase the Y position for the next message
                 messageIndex++;
                 setTimeout(showNextMessage, 4000); // Adjust timing between messages
+            } else {
+                // Once all messages are shown, display the image
+                setTimeout(pulseImageIntoView, 500); // Slight delay before showing the image
             }
         }
 
         showNextMessage();
-        setTimeout(() => pulseImageIntoView(), 12000); // Show the image after messages
     }
 
-    // Function to display messages like a conversation
+    // Function to display messages like a conversation with random positions
     function showTrapMessage(text, topPosition) {
         const message = document.createElement('div');
-        message.style.position = "absolute";
-        message.style.left = "50%";
-        message.style.transform = "translateX(-50%)";
-        message.style.top = `${topPosition}px`; // Position messages with increasing Y-axis
+        message.style.position = "fixed";
+        message.style.left = Math.random() * 90 + "vw"; // Random X position
+        message.style.top = `${topPosition}px`; // Y position incremented for each message
         message.style.color = "white";
         message.style.fontSize = "36px";
         message.style.fontWeight = "bold";
@@ -246,6 +250,6 @@
             img.style.opacity = 1;
         }, 500);
     }
-    </script>
+</script>
 </body>
 </html>
