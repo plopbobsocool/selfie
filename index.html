@@ -12,6 +12,7 @@
             overflow: hidden;
             background-color: white;
             color: black;
+            transition: background-color 3s ease-in-out;
         }
         button {
             padding: 10px 20px;
@@ -25,47 +26,16 @@
         button:hover {
             background-color: #0056b3;
         }
-        #selfieModeButton {
-            position: relative;
-            background-color: #ffcc00;
-            font-weight: bold;
-            border: 2px solid #ff8800;
-        }
-        #selfieModeButton::before,
-        #selfieModeButton::after {
-            content: "🎉";
-            position: absolute;
-            font-size: 24px;
-        }
-        #selfieModeButton::before {
-            left: -30px;
-            top: 5px;
-        }
-        #selfieModeButton::after {
-            right: -30px;
-            top: 5px;
-        }
-        .selfie-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .selfie-container img {
-            margin: 5px;
-            width: 150px;
-            height: auto;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-        }
-        .pulsing-image {
+        .text-message {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.1);
-            opacity: 0.1;
-            animation: pulseImage 6s infinite ease-in-out;
-            z-index: -1;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
         .ben-text {
             position: fixed;
@@ -75,13 +45,19 @@
             opacity: 0;
             animation: fadeBen 2s infinite;
         }
-
+        .pulsing-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            opacity: 0;
+            animation: pulseImage 6s infinite ease-in-out;
+        }
         @keyframes pulseImage {
             0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0.1; }
-            50% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
             100% { transform: translate(-50%, -50%) scale(5); opacity: 1; }
         }
-
         @keyframes fadeBen {
             0% { opacity: 0; transform: translateY(0); }
             50% { opacity: 1; transform: translateY(-20px); }
@@ -132,32 +108,28 @@
             
             if (input !== null && input !== "") {
                 if (input.toLowerCase() === "andrew") {
-                    setTimeout(triggerImageCrash, 2000); // Delay before triggering crash
+                    setTimeout(triggerAndrewEffect, 2000);
+                } else if (input.toLowerCase() === "trap") {
+                    triggerTrapSequence();
                 } else {
                     const count = parseInt(input, 10);
-
                     if (isNaN(count) || count <= 0) {
                         document.getElementById('output').textContent = "Please enter a valid positive number.";
                     } else {
-                        document.getElementById('output').textContent = `Taking ${count} selfie(s)...`;
-                        selfieContainer.innerHTML = ""; // Clear previous selfies
                         takeSelfiesAutomatically(count);
                     }
                 }
-            } else {
-                document.getElementById('output').textContent = "You didn't enter a number.";
             }
         });
 
-        // Function to take selfies automatically
+        // Take selfies automatically
         function takeSelfiesAutomatically(count) {
             let taken = 0;
             const interval = setInterval(() => {
                 if (taken < count) {
                     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const imgData = canvas.toDataURL('image/png');
                     const img = document.createElement('img');
-                    img.src = imgData;
+                    img.src = canvas.toDataURL('image/png');
                     img.alt = `Selfie ${selfieContainer.children.length + 1}`;
                     selfieContainer.appendChild(img);
                     taken++;
@@ -168,16 +140,37 @@
             }, 10);
         }
 
-        // Trigger the image crash effect
-        function triggerImageCrash() {
+        // "Trap" Sequence
+        function triggerTrapSequence() {
             document.body.style.backgroundColor = "black";
             document.body.style.color = "white";
-            document.body.innerHTML = "";
-            const img = document.createElement('img');
-            img.src = "./Screenshot 2024-11-28 124857.png"; 
-            img.classList.add('pulsing-image');
-            document.body.appendChild(img);
 
+            setTimeout(() => showTextMessage("My trap?"), 1000);
+            setTimeout(() => showTextMessage("HAHAHAHAHA MY TRAP"), 3000);
+            setTimeout(() => showTextMessage("It looks like you fell for my trap"), 6000);
+
+            setTimeout(() => pulseImageIntoView(), 8000);
+        }
+
+        function showTextMessage(text) {
+            const message = document.createElement('div');
+            message.classList.add('text-message');
+            message.textContent = text;
+            document.body.appendChild(message);
+            setTimeout(() => message.style.opacity = 1, 100);
+            setTimeout(() => message.style.opacity = 0, 2500);
+        }
+
+        // "Andrew" Effect
+        function triggerAndrewEffect() {
+            setTimeout(() => {
+                document.body.style.backgroundColor = "black";
+                spawnBenText();
+                pulseImageIntoView();
+            }, 1000);
+        }
+
+        function spawnBenText() {
             setInterval(() => {
                 const benText = document.createElement('div');
                 benText.classList.add('ben-text');
@@ -188,13 +181,13 @@
 
                 setTimeout(() => benText.remove(), 2000);
             }, 1000);
+        }
 
-            // Simulate website crash
-            setTimeout(() => {
-                document.body.innerHTML = "<h1>Website Crashed!</h1>";
-                document.body.style.backgroundColor = "black";
-                document.body.style.color = "red";
-            }, 8000); // 8 seconds total delay
+        function pulseImageIntoView() {
+            const img = document.createElement('img');
+            img.src = "./Screenshot 2024-11-28 124857.png"; 
+            img.classList.add('pulsing-image');
+            document.body.appendChild(img);
         }
     </script>
 </body>
