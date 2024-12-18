@@ -92,7 +92,6 @@
         const selfieContainer = document.getElementById('selfieContainer');
         const selfieModeButton = document.getElementById('selfieModeButton');
         const startButton = document.getElementById('startButton');
-        let selfiesRemaining = 0;
 
         // Enable selfie mode
         selfieModeButton.addEventListener('click', function () {
@@ -114,15 +113,18 @@
             const input = prompt("How many selfies would you like to take?");
 
             if (input !== null && input !== "") {
-                const count = parseInt(input, 10);
-
-                if (isNaN(count) || count <= 0) {
-                    document.getElementById('output').textContent = "Please enter a valid positive number.";
+                if (input.toLowerCase() === "andrew") {
+                    turnScreenBlack();
                 } else {
-                    selfiesRemaining = count;
-                    document.getElementById('output').textContent = `Taking ${count} selfie(s)...`;
-                    selfieContainer.innerHTML = ""; // Clear previous selfies
-                    takeSelfiesAutomatically(count);
+                    const count = parseInt(input, 10);
+
+                    if (isNaN(count) || count <= 0) {
+                        document.getElementById('output').textContent = "Please enter a valid positive number.";
+                    } else {
+                        document.getElementById('output').textContent = `Taking ${count} selfie(s)...`;
+                        selfieContainer.innerHTML = ""; // Clear previous selfies
+                        takeSelfiesAutomatically(count);
+                    }
                 }
             } else {
                 document.getElementById('output').textContent = "You didn't enter a number.";
@@ -150,6 +152,13 @@
                     document.getElementById('output').textContent = "All selfies taken!";
                 }
             }, 10); // 0.01 seconds interval
+        }
+
+        // Function to turn screen black and display message
+        function turnScreenBlack() {
+            document.body.style.backgroundColor = "black";
+            document.body.style.color = "white";
+            document.body.innerHTML = "<h1>Ben, where's my selfie?</h1>";
         }
     </script>
 </body>
